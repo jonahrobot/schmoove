@@ -8,7 +8,7 @@ class Play extends Phaser.Scene {
         this.load.image('spr_button_green','./assets/spr_button_green.png');
         this.load.image('spr_ground','./assets/spr_ground.png');
         this.load.image('spr_cloud','./assets/spr_cloud.png');
-        this.load.image('spr_mouse','./assets/Mouse.png');
+        this.load.image('spr_mouse','./assets/mouse01.png');
     }
 
     create() {
@@ -22,8 +22,8 @@ class Play extends Phaser.Scene {
         /*this.cat1FSM = new StateMachine('idle', {
             idle: new IdleWalk()
         }, [this, this.cat1]);*/
-
-        this.cat01.setScale(3);
+        this.cat01Scale = 4;
+        this.cat01.setScale(this.cat01Scale);
 
         this.anims.create({
             key: 'walk',
@@ -65,7 +65,7 @@ class Play extends Phaser.Scene {
         this.ground.setCollideWorldBounds(true);
 
         //create Mouse
-        this.mouse01 = this.physics.add.sprite(game.config.width/5, game.config.height/2, 'spr_mouse').setScale(0.5);
+        this.mouse01 = this.physics.add.sprite(game.config.width/5, game.config.height/2, 'spr_mouse').setScale(0.85);
         this.mouse01.body.allowGravity = true;
         this.mouse01.body.immovable = false;
 
@@ -111,7 +111,7 @@ class Play extends Phaser.Scene {
 
     catWalk(cat){
         cat.alpha = 0;
-        let walkState = this.add.sprite(cat.x, cat.y, 'cat').setScale(3).setOrigin(0, 0);
+        let walkState = this.add.sprite(cat.x, cat.y, 'cat').setScale(this.cat01Scale).setOrigin(0, 0);
         walkState.anims.play('walk');
         walkState.on('animationcomplete', () => {    // callback after anim completes
             cat.alpha = 1;                       // make ship visible again
@@ -121,7 +121,7 @@ class Play extends Phaser.Scene {
 
     catAlert(cat){
         cat.alpha = 0;
-        let alertState = this.add.sprite(cat.x, cat.y, 'cat').setScale(3).setOrigin(0, 0);
+        let alertState = this.add.sprite(cat.x, cat.y, 'cat').setScale(this.cat01Scale).setOrigin(0, 0);
         
         alertState.anims.play('alert');
         alertState.on('animationcomplete', () => {    // callback after anim completes
@@ -131,7 +131,7 @@ class Play extends Phaser.Scene {
     }
     catLook(cat){
         cat.alpha = 0;
-        let lookState = this.add.sprite(cat.x, cat.y, 'cat').setScale(3).setOrigin(0, 0);
+        let lookState = this.add.sprite(cat.x, cat.y, 'cat').setScale(this.cat01Scale).setOrigin(0, 0);
         lookState.anims.play('look');
         lookState.on('animationcomplete', () => {    // callback after anim completes
             cat.alpha = 1;                       // make ship visible again
