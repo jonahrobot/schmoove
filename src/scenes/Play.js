@@ -35,8 +35,8 @@ class Play extends Phaser.Scene {
 
 
         // variables and settings
-        this.MAX_VELOCITY = 300;    // pixels/second
-        this.physics.world.gravity.y = 1000;
+        this.MAX_VELOCITY = 100;    // pixels/second
+        this.physics.world.gravity.y = 700;
 
         // Create Background
         this.ground = this.physics.add.sprite(game.config.width/2,game.config.height-50,'spr_ground').setScale(0.75);
@@ -72,10 +72,12 @@ class Play extends Phaser.Scene {
             this.button.tapDown();
             this.mouse01.setVelocityX(this.MAX_VELOCITY);
             this.mouse01.setDragX(400);
-            /*this.clock = this.time.delayedCall(400, () => {
-                this.mouse01.setVelocityX(0);
-            }, null, this);*/
-
+            
+            // Check for win
+            console.log("Current x: " + this.mouse01.x);
+            if(this.mouse01.x >= game.config.width-200) {
+                console.log("WIN");
+            }
         }
     }
 
