@@ -5,6 +5,16 @@ let config = {
     backgroundColor: '#35A7FF',
     pixelArt: true,
     autoCenter: true,
+    physics: {
+      default: 'arcade',
+      arcade: {
+        debug: true,
+        gravity: {
+          x:0,
+          y:0
+        }
+      }
+    },
     scene: [ Play ]
   }
 
