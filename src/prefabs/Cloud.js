@@ -33,7 +33,6 @@ class Cloud extends Phaser.GameObjects.Sprite {
         this.x -= this.moveSpeed;
         // wrap around from left edge to right edge
         if(this.x <= 0 - this.width) {
-
             this.reset();
             var test = getRandomInt(3); // 0, 1 or 2
 
@@ -51,7 +50,6 @@ class Cloud extends Phaser.GameObjects.Sprite {
                     this.moveSpeed = 0.25;
                   break;
               }
-          
         }
     }
 

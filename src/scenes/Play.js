@@ -20,29 +20,23 @@ class Play extends Phaser.Scene {
         this.cloud02 = new Cloud(this, game.config.width, game.config.height * Math.random() * 0.7, 'spr_cloud', 0).setOrigin(0, 0);
 
         // Create Cat
-        this.cat01 = this.physics.add.sprite(game.config.width/2, game.config.height/2, 'cat', 0).setOrigin(0, 0);
-        /*this.cat1FSM = new StateMachine('idle', {
-            idle: new IdleWalk()
-        }, [this, this.cat1]);*/
-        this.cat01Scale = 4;
-        this.cat01.setScale(this.cat01Scale);
-
+        this.cat1 = new Cat(this, game.config.width/2+100, game.config.height/2, 'cat', 0).setOrigin(0, 0);
+        this.cat1.setScale(5);
         this.anims.create({
             key: 'walk',
             frames: this.anims.generateFrameNumbers('cat', { start: 0, end: 8, first: 0}),
-            frameRate: 15
+            frameRate: 1
         });
         this.anims.create({
             key: 'alert',
-            frames: this.anims.generateFrameNumbers('cat', { start: 9, end: 29, first: 9}),
-            frameRate: 15
+            frames: this.anims.generateFrameNumbers('cat', { start: 9, end: 29, first: 10}),
+            frameRate: 60
         });
         this.anims.create({
             key: 'look',
             frames: this.anims.generateFrameNumbers('cat', { start: 30, end: 30, first: 30}),
-            frameRate: 15
+            frameRate: 1
         });
-
 
         // Create Tutorial button
         this.button = new Tutorial_Button(this,game.config.width/2,game.config.height/6,'spr_button_green',0);
@@ -68,6 +62,7 @@ class Play extends Phaser.Scene {
 
         //create Mouse
         this.mouse01 = this.physics.add.sprite(game.config.width/5, game.config.height/2, 'spr_mouse').setScale(0.85);
+
         this.mouse01.body.allowGravity = true;
         this.mouse01.body.immovable = false;
 
@@ -75,11 +70,55 @@ class Play extends Phaser.Scene {
 
         // add physics collider
         this.physics.add.collider(this.mouse01, this.ground);
-        this.physics.add.collider(this.cat01, this.ground); 
-        this.physics.add.collider(this.cat01, this.mouse01); 
+        this.physics.add.collider(this.cat01, this.ground);
+        this.check = 0;
     }
 
     update() {
+        //this.catWalk(this.cat1);
+        //console.log(this.mouse01.x);
+        
+        // Cat checks
+        if (this.mouse01.x >= 200 && this.check == 0) {
+            this.cat1.flipX=true;
+            this.currentPos = this.mouse01.x;
+            this.clock = this.time.delayedCall(3000, () => {
+                this.cat1.flipX=false;
+            }, null, this);
+            this.check++;
+        }
+        if (this.mouse01.x >= 260 && this.check == 1) {
+            this.cat1.flipX=true;
+            this.currentPos = this.mouse01.x;
+            this.clock = this.time.delayedCall(3000, () => {
+                this.cat1.flipX=false;
+            }, null, this);
+            this.check++;
+        }
+        if (this.mouse01.x >= 320 && this.check == 2) {
+            this.cat1.flipX=true;
+            this.currentPos = this.mouse01.x;
+            this.clock = this.time.delayedCall(3000, () => {
+                this.cat1.flipX=false;
+            }, null, this);
+            this.check++;
+        }
+        if (this.mouse01.x >= 390 && this.check == 3) {
+            this.cat1.flipX=true;
+            this.currentPos = this.mouse01.x;
+            this.clock = this.time.delayedCall(3000, () => {
+                this.cat1.flipX=false;
+            }, null, this);
+            this.check++;
+        }
+
+        // Lose check
+        if (this.cat1.flipX == true && this.mouse01.x > (this.currentPos + 11)) {
+            console.log("LOSE")
+            this.cat1.flipX = true;
+            this.won = true;
+            this.cat1.anims.play('look');
+        }
 
         // Clouds
         this.cloud01.update();
@@ -87,7 +126,6 @@ class Play extends Phaser.Scene {
 
         if(Phaser.Input.Keyboard.JustDown(keyK)){
             this.button.togglePulse();
-            this.catWalk(this.cat1);
         }
 
         if(Phaser.Input.Keyboard.JustDown(keySPACE) && this.won == false){
@@ -115,13 +153,15 @@ class Play extends Phaser.Scene {
     }
 
     catWalk(cat){
+
         cat.alpha = 0;
         let walkState = this.add.sprite(cat.x, cat.y, 'cat').setScale(this.cat01Scale).setOrigin(0, 0);
         walkState.anims.play('walk');
         walkState.on('animationcomplete', () => {    // callback after anim completes
             cat.alpha = 1;                       // make ship visible again
             walkState.destroy();                       // remove explosion sprite
-          });      
+          });
+        //cat.anims.play('cat');
     }
 
     catAlert(cat){
