@@ -13,20 +13,33 @@ class Play extends Phaser.Scene {
 
     create() {
 
-        this.won = false;
-
         // Create Clouds
         this.cloud01 = new Cloud(this, game.config.width, game.config.height * Math.random(), 'spr_cloud', 0).setOrigin(0, 0);
         this.cloud02 = new Cloud(this, game.config.width, game.config.height * Math.random(), 'spr_cloud', 0).setOrigin(0, 0);
 
         // Create Cat
-        this.cat1 = new Cat(this, game.config.width/2, game.config.height/2-50, 'cat', 0).setOrigin(0, 0);
-        this.cat1.setScale(5);
+        this.cat1 = new Cat(this, game.config.width/2, game.config.height/2, 'cat', 0).setOrigin(0, 0);
+        /*this.cat1FSM = new StateMachine('idle', {
+            idle: new IdleWalk()
+        }, [this, this.cat1]);*/
+
+        this.cat1.setScale(3);
         this.anims.create({
-            key: 'cat',
-            frames: this.anims.generateFrameNumbers('cat', { start: 0, end: 9, first: 0}),
+            key: 'walk',
+            frames: this.anims.generateFrameNumbers('cat', { start: 0, end: 8, first: 0}),
             frameRate: 1
         });
+        this.anims.create({
+            key: 'alert',
+            frames: this.anims.generateFrameNumbers('cat', { start: 9, end: 29, first: 10}),
+            frameRate: 60
+        });
+        this.anims.create({
+            key: 'look',
+            frames: this.anims.generateFrameNumbers('cat', { start: 30, end: 30, first: 30}),
+            frameRate: 1
+        });
+
 
         // Create Tutorial button
         this.button = new Tutorial_Button(this,game.config.width/2,game.config.height/6,'spr_button_green',0);
@@ -37,8 +50,8 @@ class Play extends Phaser.Scene {
 
 
         // variables and settings
-        this.MAX_VELOCITY = 100;    // pixels/second
-        this.physics.world.gravity.y = 700;
+        this.MAX_VELOCITY = 300;    // pixels/second
+        this.physics.world.gravity.y = 1000;
 
         // Create Background
         this.ground = this.physics.add.sprite(game.config.width/2,game.config.height-50,'spr_ground').setScale(0.75);
@@ -56,11 +69,15 @@ class Play extends Phaser.Scene {
 
         // add physics collider
         this.physics.add.collider(this.mouse01, this.ground);
-        
     }
 
     update() {
+        this.cat1.setScale(30);
         this.catWalk(this.cat1);
+        //this.catAlert(this.cat1);
+        //this.catLook(this.cat1);
+        //this.cat1.setScale(5);
+        //this.cat1.anims.play('look');
 
         // Clouds
         this.cloud01.update();
@@ -70,22 +87,43 @@ class Play extends Phaser.Scene {
             this.button.togglePulse();
         }
 
-        if(Phaser.Input.Keyboard.JustDown(keySPACE) && this.won == false){
+        if(Phaser.Input.Keyboard.JustDown(keySPACE)){
             this.button.tapDown();
             this.mouse01.setVelocityX(this.MAX_VELOCITY);
             this.mouse01.setDragX(400);
-            
-            // Check for win
-            console.log("Current x: " + this.mouse01.x);
-            if(this.mouse01.x >= game.config.width-150) {
-                this.won = true;
-                console.log("WIN");
-            }
+            /*this.clock = this.time.delayedCall(400, () => {
+                this.mouse01.setVelocityX(0);
+            }, null, this);*/
+
         }
     }
 
     catWalk(cat){
-        //let walk = this.add.sprite(this.cat1.x, this.cat1.y, 'cat').setOrigin(0, 0);
-        cat.anims.play('cat');
+        cat.alpha = 0;
+        //let walk = this.add.sprite(cat.x, cat.y, 'cat').setOrigin(0, 0);
+        cat.anims.play('walk');
+        /*walk.on('animationcomplete', () => {    // callback after anim completes
+            cat.alpha = 1;                       // make ship visible again
+            cat.destroy();                       // remove explosion sprite
+          });      */ 
     }
+    catAlert(cat){
+        cat.alpha = 0;
+        let alert = this.add.sprite(cat.x, cat.y, 'cat').setOrigin(0, 0);
+        alert.anims.play('alert');
+        alert.on('animationcomplete', () => {    // callback after anim completes
+            cat.alpha = 1;                       // make ship visible again
+            cat.destroy();                       // remove explosion sprite
+          });       
+    }
+    catLook(cat){
+        cat.alpha = 0;
+        let look = this.add.sprite(cat.x, cat.y, 'cat').setOrigin(0, 0);
+        look.anims.play('look');
+        look.on('animationcomplete', () => {    // callback after anim completes
+            cat.alpha = 1;                       // make ship visible again
+            cat.destroy();                       // remove explosion sprite
+          });       
+    }
+
 }

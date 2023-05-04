@@ -3,15 +3,14 @@ class Cat extends Phaser.GameObjects.Sprite {
         super(scene, x, y, texture, frame);
         scene.add.existing(this);
     }
+}
 
-    update() {
-        this.x -= this.moveSpeed;
-        if(this.x <= 0 - this.width) {
-            this.x = game.config.width;
-        }
+class IdleWalk extends State {
+    enter(scene, cat) {
+        cat1.anims.play('walk');
     }
 
-    reset() {
-        this.x = game.config.width;
+    execute(scene, cat) {
+        
     }
 }
