@@ -2,7 +2,7 @@ let config = {
     type: Phaser.WEBGL,
     width: 640,
     height: 480,
-    backgroundColor: '#4488aa',
+    backgroundColor: '#35A7FF',
     pixelArt: true,
     autoCenter: true,
     scene: [ Play ]

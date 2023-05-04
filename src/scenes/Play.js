@@ -6,10 +6,15 @@ class Play extends Phaser.Scene {
     preload() {//0-9, 10-30, 31
         this.load.spritesheet('cat', './assets/Cat32.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 30});
         this.load.image('spr_button_green','./assets/spr_button_green.png');
-        this.load.image('spr_button_red','./assets/spr_button_red.png');
+        this.load.image('spr_ground','./assets/spr_ground.png');
+        this.load.image('spr_cloud','./assets/spr_cloud.png')
     }
 
     create() {
+
+        // Create Clouds
+        this.cloud01 = new Cloud(this, game.config.width, game.config.height * Math.random(), 'spr_cloud', 0).setOrigin(0, 0);
+        this.cloud02 = new Cloud(this, game.config.width, game.config.height * Math.random(), 'spr_cloud', 0).setOrigin(0, 0);
 
         // Create Cat
         this.cat1 = new Cat(this, game.config.width/2, game.config.height/2, 'cat', 0).setOrigin(0, 0);
@@ -21,15 +26,22 @@ class Play extends Phaser.Scene {
         });
 
         // Create Tutorial button
-        this.button = new Tutorial_Button(this,game.config.width/2,game.config.height/6,'spr_button_green',0,'spr_button_red');
+        this.button = new Tutorial_Button(this,game.config.width/2,game.config.height/6,'spr_button_green',0);
 
         // Pair Input
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         keyK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K)
+
+        // Create Background
+        this.add.image(game.config.width/2,game.config.height-10,'spr_ground').setScale(1.5);
     }
 
     update() {
         this.catWalk(this.cat1);
+
+        // Clouds
+        this.cloud01.update();
+        this.cloud02.update();
 
         if(Phaser.Input.Keyboard.JustDown(keyK)){
             this.button.togglePulse();

@@ -4,17 +4,13 @@
  *  Will pulse when player can move, or stop pulsing and turn red when they can't.
  */
 class Tutorial_Button extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, texture, frame, altTexture) {
+    constructor(scene, x, y, texture, frame) {
         super(scene, x, y, texture, frame);
         scene.add.existing(this);
 
         // If tutorial button is pulsing, green if so, red if false.
         this.pulse = true;
         this.tween = null;
-        this.defaultTexture = texture;
-        this.altTexture = altTexture;
-
-        this.texture = this.defaultTexture;
 
         this.tween = this.scene.tweens.add({
             targets: this,
