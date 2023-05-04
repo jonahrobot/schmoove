@@ -29,16 +29,20 @@ class Tutorial_Button extends Phaser.GameObjects.Sprite {
     }
 
     tapDown(){
-        this.tween.seek(500);
+        if(this.pulse == true){
+            this.tween.seek(500);
+        }
     }
 
     togglePulse(){       
         if(this.pulse == true){
             this.pulse = false;
             this.tween.pause();
+            this.setTint(Phaser.Display.Color.GetColor32(255, 0, 0, 1));
         }else{
             this.pulse = true;
             this.tween.resume();
+            this.setTint(Phaser.Display.Color.GetColor32(255, 255, 255, 0));
         }
     }
 }
