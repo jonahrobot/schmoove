@@ -13,6 +13,8 @@ class Play extends Phaser.Scene {
 
     create() {
 
+        this.won = false;
+
         // Create Clouds
         this.cloud01 = new Cloud(this, game.config.width, game.config.height * Math.random(), 'spr_cloud', 0).setOrigin(0, 0);
         this.cloud02 = new Cloud(this, game.config.width, game.config.height * Math.random(), 'spr_cloud', 0).setOrigin(0, 0);
@@ -68,14 +70,15 @@ class Play extends Phaser.Scene {
             this.button.togglePulse();
         }
 
-        if(Phaser.Input.Keyboard.JustDown(keySPACE)){
+        if(Phaser.Input.Keyboard.JustDown(keySPACE) && this.won == false){
             this.button.tapDown();
             this.mouse01.setVelocityX(this.MAX_VELOCITY);
             this.mouse01.setDragX(400);
             
             // Check for win
             console.log("Current x: " + this.mouse01.x);
-            if(this.mouse01.x >= game.config.width-200) {
+            if(this.mouse01.x >= game.config.width-150) {
+                this.won = true;
                 console.log("WIN");
             }
         }
