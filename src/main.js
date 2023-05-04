@@ -3,6 +3,8 @@ let config = {
     width: 640,
     height: 480,
     backgroundColor: '#4488aa',
+    pixelArt: true,
+    autoCenter: true,
     scene: [ Play ]
   }
 
