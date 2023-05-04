@@ -14,30 +14,31 @@ class Play extends Phaser.Scene {
     create() {
 
         // Create Clouds
-        this.cloud01 = new Cloud(this, game.config.width, game.config.height * Math.random(), 'spr_cloud', 0).setOrigin(0, 0);
-        this.cloud02 = new Cloud(this, game.config.width, game.config.height * Math.random(), 'spr_cloud', 0).setOrigin(0, 0);
+        this.cloud01 = new Cloud(this, game.config.width, game.config.height * Math.random() * 0.7, 'spr_cloud', 0).setOrigin(0, 0);
+        this.cloud02 = new Cloud(this, game.config.width, game.config.height * Math.random() * 0.7, 'spr_cloud', 0).setOrigin(0, 0);
 
         // Create Cat
-        this.cat1 = new Cat(this, game.config.width/2, game.config.height/2, 'cat', 0).setOrigin(0, 0);
+        this.cat01 = this.physics.add.sprite(game.config.width/2, game.config.height/2, 'cat', 0).setOrigin(0, 0);
         /*this.cat1FSM = new StateMachine('idle', {
             idle: new IdleWalk()
         }, [this, this.cat1]);*/
 
-        this.cat1.setScale(3);
+        this.cat01.setScale(3);
+
         this.anims.create({
             key: 'walk',
             frames: this.anims.generateFrameNumbers('cat', { start: 0, end: 8, first: 0}),
-            frameRate: 1
+            frameRate: 15
         });
         this.anims.create({
             key: 'alert',
-            frames: this.anims.generateFrameNumbers('cat', { start: 9, end: 29, first: 10}),
-            frameRate: 60
+            frames: this.anims.generateFrameNumbers('cat', { start: 9, end: 29, first: 9}),
+            frameRate: 15
         });
         this.anims.create({
             key: 'look',
             frames: this.anims.generateFrameNumbers('cat', { start: 30, end: 30, first: 30}),
-            frameRate: 1
+            frameRate: 15
         });
 
 
@@ -46,8 +47,11 @@ class Play extends Phaser.Scene {
 
         // Pair Input
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        keyK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K)
-
+        keyK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
+        keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+        keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+        
 
         // variables and settings
         this.MAX_VELOCITY = 300;    // pixels/second
@@ -69,15 +73,11 @@ class Play extends Phaser.Scene {
 
         // add physics collider
         this.physics.add.collider(this.mouse01, this.ground);
+        this.physics.add.collider(this.cat01, this.ground); 
+        this.physics.add.collider(this.cat01, this.mouse01); 
     }
 
     update() {
-        this.cat1.setScale(30);
-        this.catWalk(this.cat1);
-        //this.catAlert(this.cat1);
-        //this.catLook(this.cat1);
-        //this.cat1.setScale(5);
-        //this.cat1.anims.play('look');
 
         // Clouds
         this.cloud01.update();
@@ -85,6 +85,7 @@ class Play extends Phaser.Scene {
 
         if(Phaser.Input.Keyboard.JustDown(keyK)){
             this.button.togglePulse();
+            this.catWalk(this.cat1);
         }
 
         if(Phaser.Input.Keyboard.JustDown(keySPACE)){
@@ -96,33 +97,45 @@ class Play extends Phaser.Scene {
             }, null, this);*/
 
         }
+
+        if(Phaser.Input.Keyboard.JustDown(keyQ)){
+            this.catWalk(this.cat01);
+        }
+        if(Phaser.Input.Keyboard.JustDown(keyW)){
+            this.catAlert(this.cat01);
+        }
+        if(Phaser.Input.Keyboard.JustDown(keyE)){
+            this.catLook(this.cat01);
+        }
     }
 
     catWalk(cat){
         cat.alpha = 0;
-        //let walk = this.add.sprite(cat.x, cat.y, 'cat').setOrigin(0, 0);
-        cat.anims.play('walk');
-        /*walk.on('animationcomplete', () => {    // callback after anim completes
+        let walkState = this.add.sprite(cat.x, cat.y, 'cat').setScale(3).setOrigin(0, 0);
+        walkState.anims.play('walk');
+        walkState.on('animationcomplete', () => {    // callback after anim completes
             cat.alpha = 1;                       // make ship visible again
-            cat.destroy();                       // remove explosion sprite
-          });      */ 
+            walkState.destroy();                       // remove explosion sprite
+          });      
     }
+
     catAlert(cat){
         cat.alpha = 0;
-        let alert = this.add.sprite(cat.x, cat.y, 'cat').setOrigin(0, 0);
-        alert.anims.play('alert');
-        alert.on('animationcomplete', () => {    // callback after anim completes
+        let alertState = this.add.sprite(cat.x, cat.y, 'cat').setScale(3).setOrigin(0, 0);
+        
+        alertState.anims.play('alert');
+        alertState.on('animationcomplete', () => {    // callback after anim completes
             cat.alpha = 1;                       // make ship visible again
-            cat.destroy();                       // remove explosion sprite
+            alertState.destroy();                       // remove explosion sprite
           });       
     }
     catLook(cat){
         cat.alpha = 0;
-        let look = this.add.sprite(cat.x, cat.y, 'cat').setOrigin(0, 0);
-        look.anims.play('look');
-        look.on('animationcomplete', () => {    // callback after anim completes
+        let lookState = this.add.sprite(cat.x, cat.y, 'cat').setScale(3).setOrigin(0, 0);
+        lookState.anims.play('look');
+        lookState.on('animationcomplete', () => {    // callback after anim completes
             cat.alpha = 1;                       // make ship visible again
-            cat.destroy();                       // remove explosion sprite
+            lookState.destroy();                       // remove explosion sprite
           });       
     }
 
