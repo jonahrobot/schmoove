@@ -8,6 +8,8 @@ class Cloud extends Phaser.GameObjects.Sprite {
         super(scene, x, y, texture, frame);
 
         scene.add.existing(this);   // add to existing scene
+        this.scale = 0.2;
+        this.moveSpeed = 0.25;
         var test = getRandomInt(3); // 0, 1 or 2
 
         switch(test) {
@@ -31,6 +33,8 @@ class Cloud extends Phaser.GameObjects.Sprite {
         this.x -= this.moveSpeed;
         // wrap around from left edge to right edge
         if(this.x <= 0 - this.width) {
+
+            this.reset();
             var test = getRandomInt(3); // 0, 1 or 2
 
             switch(test) {
@@ -47,6 +51,7 @@ class Cloud extends Phaser.GameObjects.Sprite {
                     this.moveSpeed = 0.25;
                   break;
               }
+          
         }
     }
 
@@ -54,7 +59,6 @@ class Cloud extends Phaser.GameObjects.Sprite {
     reset() {
         this.x = game.config.width;
         this.y = (game.config.height - 100) * Math.random();
-        setUpCloud();
     }
 
    
