@@ -13,7 +13,13 @@ class Play extends Phaser.Scene {
 
     create() {
 
-        this.won = false;
+        this.STATES = {
+            Playing: 0, 
+            Win: 1,
+            Lose: 2
+        }
+
+        this.gameState = this.STATES.Playing;
 
         // Create Clouds
         this.cloud01 = new Cloud(this, game.config.width, game.config.height * Math.random() * 0.7, 'spr_cloud', 0).setOrigin(0, 0);
@@ -50,8 +56,8 @@ class Play extends Phaser.Scene {
         
 
         // variables and settings
-        this.MAX_VELOCITY = 300;    // pixels/second
-        this.physics.world.gravity.y = 1000;
+        this.MAX_VELOCITY = 100;    // pixels/second
+        this.physics.world.gravity.y = 700;
 
         // Create Background
         this.ground = this.physics.add.sprite(game.config.width/2,game.config.height-50,'spr_ground').setScale(0.75);
@@ -70,8 +76,21 @@ class Play extends Phaser.Scene {
 
         // add physics collider
         this.physics.add.collider(this.mouse01, this.ground);
-        this.physics.add.collider(this.cat01, this.ground);
+        this.physics.add.collider(this.cat1, this.ground);
         this.check = 0;
+    }
+
+    CatFlipCode(){
+        this.cat1.flipX=true;
+        this.cat1.anims.play('alert');
+        this.button.togglePulse();
+        this.currentPos = this.mouse01.x;
+        this.clock = this.time.delayedCall(3000, () => {
+            this.cat1.flipX=false;
+            this.cat1.anims.play('walk');
+            this.button.togglePulse();
+        }, null, this);
+        this.check++;
     }
 
     update() {
@@ -80,44 +99,28 @@ class Play extends Phaser.Scene {
         
         // Cat checks
         if (this.mouse01.x >= 200 && this.check == 0) {
-            this.cat1.flipX=true;
-            this.currentPos = this.mouse01.x;
-            this.clock = this.time.delayedCall(3000, () => {
-                this.cat1.flipX=false;
-            }, null, this);
-            this.check++;
+            this.CatFlipCode();
         }
         if (this.mouse01.x >= 260 && this.check == 1) {
-            this.cat1.flipX=true;
-            this.currentPos = this.mouse01.x;
-            this.clock = this.time.delayedCall(3000, () => {
-                this.cat1.flipX=false;
-            }, null, this);
-            this.check++;
+            this.CatFlipCode();
         }
         if (this.mouse01.x >= 320 && this.check == 2) {
-            this.cat1.flipX=true;
-            this.currentPos = this.mouse01.x;
-            this.clock = this.time.delayedCall(3000, () => {
-                this.cat1.flipX=false;
-            }, null, this);
-            this.check++;
+            this.CatFlipCode();
         }
         if (this.mouse01.x >= 390 && this.check == 3) {
-            this.cat1.flipX=true;
-            this.currentPos = this.mouse01.x;
-            this.clock = this.time.delayedCall(3000, () => {
-                this.cat1.flipX=false;
-            }, null, this);
-            this.check++;
+            this.CatFlipCode();
         }
 
         // Lose check
-        if (this.cat1.flipX == true && this.mouse01.x > (this.currentPos + 11)) {
+        if (this.cat1.flipX == true && this.mouse01.x > (this.currentPos + 11) &&  this.gameState == this.STATES.Playing) {
             console.log("LOSE")
-            this.cat1.flipX = true;
-            this.won = true;
+
+            // STop animation timer
+            this.clock.paused = true;
+
+            this.gameState = this.STATES.Lose;
             this.cat1.anims.play('look');
+            this.cat1.flipX = false;
         }
 
         // Clouds
@@ -128,7 +131,7 @@ class Play extends Phaser.Scene {
             this.button.togglePulse();
         }
 
-        if(Phaser.Input.Keyboard.JustDown(keySPACE) && this.won == false){
+        if(Phaser.Input.Keyboard.JustDown(keySPACE) && this.gameState == this.STATES.Playing){
             this.button.tapDown();
             this.mouse01.setVelocityX(this.MAX_VELOCITY);
             this.mouse01.setDragX(400);
@@ -137,51 +140,19 @@ class Play extends Phaser.Scene {
            console.log("Current x: " + this.mouse01.x);
            if(this.mouse01.x >= game.config.width-150) {
                console.log("WIN");
+               this.gameState = this.STATES.Win;
            }
 
         }
 
         if(Phaser.Input.Keyboard.JustDown(keyQ)){
-            this.catWalk(this.cat01);
+            this.cat1.anims.play('walk');
         }
         if(Phaser.Input.Keyboard.JustDown(keyW)){
-            this.catAlert(this.cat01);
+            this.cat1.anims.play('alert');
         }
         if(Phaser.Input.Keyboard.JustDown(keyE)){
-            this.catLook(this.cat01);
+            this.cat1.anims.play('look');
         }
-    }
-
-    catWalk(cat){
-
-        cat.alpha = 0;
-        let walkState = this.add.sprite(cat.x, cat.y, 'cat').setScale(this.cat01Scale).setOrigin(0, 0);
-        walkState.anims.play('walk');
-        walkState.on('animationcomplete', () => {    // callback after anim completes
-            cat.alpha = 1;                       // make ship visible again
-            walkState.destroy();                       // remove explosion sprite
-          });
-        //cat.anims.play('cat');
-    }
-
-    catAlert(cat){
-        cat.alpha = 0;
-        let alertState = this.add.sprite(cat.x, cat.y, 'cat').setScale(this.cat01Scale).setOrigin(0, 0);
-        
-        alertState.anims.play('alert');
-        alertState.on('animationcomplete', () => {    // callback after anim completes
-            cat.alpha = 1;                       // make ship visible again
-            alertState.destroy();                       // remove explosion sprite
-          });       
-    }
-    catLook(cat){
-        cat.alpha = 0;
-        let lookState = this.add.sprite(cat.x, cat.y, 'cat').setScale(this.cat01Scale).setOrigin(0, 0);
-        lookState.anims.play('look');
-        lookState.on('animationcomplete', () => {    // callback after anim completes
-            cat.alpha = 1;                       // make ship visible again
-            lookState.destroy();                       // remove explosion sprite
-          });       
-    }
-
-}
+    }      
+}   
