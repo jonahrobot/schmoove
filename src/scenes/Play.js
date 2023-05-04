@@ -25,13 +25,18 @@ class Play extends Phaser.Scene {
 
         // Pair Input
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        keyK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K)
     }
 
     update() {
         this.catWalk(this.cat1);
 
+        if(Phaser.Input.Keyboard.JustDown(keyK)){
+            this.button.togglePulse();
+        }
+
         if(Phaser.Input.Keyboard.JustDown(keySPACE)){
-            this.button.setPulse(!this.button.getPulse());
+            this.button.tapDown();
         }
     }
 
