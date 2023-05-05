@@ -149,9 +149,9 @@ class Play extends Phaser.Scene {
         }
 
         let textConfig = { 
-            fontFamily: 'Courier',
+            fontFamily: 'font1',
         fontSize: '28px',
-        backgroundColor: '#F8FF0E',
+        backgroundColor: '#F4442E',
         color: '#000000',
         align: 'right',
         padding: {
