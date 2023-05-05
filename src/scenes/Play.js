@@ -86,10 +86,13 @@ class Play extends Phaser.Scene {
     }
 
     CatFlipCode(){
-        this.cat1.flipX=true;
         this.cat1.anims.play('alert');
-        this.button.togglePulse();
-        this.currentPos = this.mouse01.x;
+        this.clock = this.time.delayedCall(100, () => {
+            this.cat1.flipX=true;
+            this.currentPos = this.mouse01.x;
+            this.button.togglePulse();
+        }, null, this);
+        this.cat1.anims.play('alert');
         this.clock = this.time.delayedCall(3000, () => {
             this.cat1.flipX=false;
             this.cat1.anims.play('walk');
