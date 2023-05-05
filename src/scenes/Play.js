@@ -9,6 +9,7 @@ class Play extends Phaser.Scene {
         this.load.image('spr_ground','./assets/spr_ground.png');
         this.load.image('spr_cloud','./assets/spr_cloud.png');
         this.load.image('spr_mouse','./assets/mouse01.png');
+        this.load.image('spr_cheese','./assets/cheese.png');
     }
 
     create() {
@@ -74,6 +75,9 @@ class Play extends Phaser.Scene {
 
         this.mouse01.setCollideWorldBounds(true);
 
+        // Add Cheese
+        this.cheese = this.add.sprite(game.config.width/2+200, game.config.height/2+126,'spr_cheese').setScale(0.5);
+
         // add physics collider
         this.physics.add.collider(this.mouse01, this.ground);
         this.physics.add.collider(this.cat1, this.ground);
@@ -91,6 +95,10 @@ class Play extends Phaser.Scene {
             this.button.togglePulse();
         }, null, this);
         this.check++;
+    }
+
+    win(){
+        
     }
 
     update() {
