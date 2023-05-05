@@ -67,6 +67,9 @@ class Play extends Phaser.Scene {
 
         this.ground.setCollideWorldBounds(true);
 
+        // Add Cheese
+        this.cheese = this.add.sprite(game.config.width/2+200, game.config.height/2+126,'spr_cheese').setScale(0.5);
+
         //create Mouse
         this.mouse01 = this.physics.add.sprite(game.config.width/5, game.config.height/2, 'spr_mouse').setScale(0.85);
 
@@ -74,9 +77,6 @@ class Play extends Phaser.Scene {
         this.mouse01.body.immovable = false;
 
         this.mouse01.setCollideWorldBounds(true);
-
-        // Add Cheese
-        this.cheese = this.add.sprite(game.config.width/2+200, game.config.height/2+126,'spr_cheese').setScale(0.5);
 
         // add physics collider
         this.physics.add.collider(this.mouse01, this.ground);
@@ -98,7 +98,32 @@ class Play extends Phaser.Scene {
     }
 
     win(){
-        
+        let pointerX = game.config.width/2+200;
+        let pointerY = game.config.height/2+126;
+        this.add.particles(0, 0, 'spr_cheese', {
+            x: {
+                onEmit: (particle, key, t, value) => {
+                    return pointerX;
+                },
+                onUpdate: (particle, key, t, value) => {
+                    return value;
+                }
+            },
+            y: {
+                onEmit: (particle, key, t, value) => {
+                    return pointerY;
+                },
+                onUpdate: (particle, key, t, value) => {
+                    //  add to the y value based on particles remaining life
+                    //  this creates the effect of gravity, without using gravity
+                    return value + (t * 10);
+                }
+            },
+            scale: { start: 0.5, end: 0 },
+            rotate:  { start: 0, end: 360 },
+            speed: 200,
+            lifespan: 2000
+        });
     }
 
     update() {
@@ -149,12 +174,13 @@ class Play extends Phaser.Scene {
            if(this.mouse01.x >= game.config.width-150) {
                console.log("WIN");
                this.gameState = this.STATES.Win;
+               this.win();
            }
 
         }
 
         if(Phaser.Input.Keyboard.JustDown(keyQ)){
-            this.cat1.anims.play('walk');
+            this.win();
         }
         if(Phaser.Input.Keyboard.JustDown(keyW)){
             this.cat1.anims.play('alert');
