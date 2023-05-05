@@ -54,6 +54,7 @@ class Play extends Phaser.Scene {
         keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+        keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         
 
         // variables and settings
@@ -119,10 +120,24 @@ class Play extends Phaser.Scene {
             this.CatFlipCode();
         }
 
+        let textConfig = { 
+            fontFamily: 'Courier',
+        fontSize: '28px',
+        backgroundColor: '#F8FF0E',
+        color: '#000000',
+        align: 'right',
+        padding: {
+            top: 5,
+            bottom: 5,
+        },
+        fixedWidth: 100
+        }
         // Lose check
         if (this.cat1.flipX == true && this.mouse01.x > (this.currentPos + 11) &&  this.gameState == this.STATES.Playing) {
             console.log("LOSE")
-
+            textConfig.fixedWidth = 0;
+            this.add.text(game.config.width/2, game.config.height/3, 'GAME OVER', textConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/3 + 64, 'Press (R) to Restart', textConfig).setOrigin(0.5);
             // STop animation timer
             this.clock.paused = true;
 
@@ -134,6 +149,9 @@ class Play extends Phaser.Scene {
         // Clouds
         this.cloud01.update();
         this.cloud02.update();
+        if(Phaser.Input.Keyboard.JustDown(keyR)){
+            this.scene.restart();
+        }
 
         if(Phaser.Input.Keyboard.JustDown(keyK)){
             this.button.togglePulse();
