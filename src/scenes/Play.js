@@ -83,6 +83,33 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.mouse01, this.ground);
         this.physics.add.collider(this.cat1, this.ground);
         this.check = 0;
+
+
+        // display score
+        let scoreConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'left',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 0
+        }
+        
+        //clock
+        this.clockTime = 40;
+        this.clockRightCounter = Math.floor(this.clockTime);
+        this.addedTime = 0;
+        this.scoreRight = this.add.text(game.config.width/2 + borderUISize*5 + borderPadding*5, borderUISize , this.clockRightCounter, scoreConfig);
+        this.scoreRight.fixedWidth = 0;
+        this.scoreRight.align = 'right';
+
+        this.initTime = this.time.now;
+
+        this.gameOver = false;
     }
 
     CatFlipCode(){
@@ -128,6 +155,56 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+
+        //is time up?
+        if(!this.gameOver){
+            if(this.clockRightCounter <= 0){
+                this.gameOver = true;
+            }
+        }
+
+        let textConfig = { 
+            fontFamily: 'Courier',
+        fontSize: '28px',
+        backgroundColor: '#F8FF0E',
+        color: '#000000',
+        align: 'right',
+        padding: {
+            top: 5,
+            bottom: 5,
+        },
+        fixedWidth: 100
+        }
+        
+        // Lose check
+        if ( (this.cat1.flipX == true && this.mouse01.x > (this.currentPos + 11) &&  this.gameState == this.STATES.Playing) || this.gameOver == true) {
+            console.log("LOSE")
+            textConfig.fixedWidth = 0;
+            this.add.text(game.config.width/2, game.config.height/3, 'GAME OVER', textConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/3 + 64, 'Press (R) to Restart', textConfig).setOrigin(0.5);
+            // STop animation timer
+            this.clock.paused = true;
+
+            this.gameState = this.STATES.Lose;
+            this.cat1.anims.play('look');
+            this.cat1.flipX = false;
+
+            this.gameOver = true;
+        }
+
+        //restart
+        if(Phaser.Input.Keyboard.JustDown(keyR)){
+            this.scene.restart();
+            this.gameOver = false;
+        }
+
+        //clock
+        if(!this.gameOver){
+            this.clockRightCounter = Math.floor(this.clockTime) - Math.floor((this.time.now-this.initTime)/1000) + Math.floor(this.addedTime);
+            this.scoreRight.text = this.clockRightCounter;
+        }
+
+
         //this.catWalk(this.cat1);
         //console.log(this.mouse01.x);
         
@@ -145,38 +222,10 @@ class Play extends Phaser.Scene {
             this.CatFlipCode();
         }
 
-        let textConfig = { 
-            fontFamily: 'Courier',
-        fontSize: '28px',
-        backgroundColor: '#F8FF0E',
-        color: '#000000',
-        align: 'right',
-        padding: {
-            top: 5,
-            bottom: 5,
-        },
-        fixedWidth: 100
-        }
-        // Lose check
-        if (this.cat1.flipX == true && this.mouse01.x > (this.currentPos + 11) &&  this.gameState == this.STATES.Playing) {
-            console.log("LOSE")
-            textConfig.fixedWidth = 0;
-            this.add.text(game.config.width/2, game.config.height/3, 'GAME OVER', textConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/3 + 64, 'Press (R) to Restart', textConfig).setOrigin(0.5);
-            // STop animation timer
-            this.clock.paused = true;
-
-            this.gameState = this.STATES.Lose;
-            this.cat1.anims.play('look');
-            this.cat1.flipX = false;
-        }
 
         // Clouds
         this.cloud01.update();
         this.cloud02.update();
-        if(Phaser.Input.Keyboard.JustDown(keyR)){
-            this.scene.restart();
-        }
 
         if(Phaser.Input.Keyboard.JustDown(keyK)){
             this.button.togglePulse();
